@@ -7,15 +7,24 @@ using Microsoft.AspNetCore.Mvc;
 using MediatR;
 using EP.Hangman.Logic.Queries;
 using EP.Hangman.Web.Filters;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.Extensions.Logging;
 using NSwag.Annotations;
 
 namespace EP.Hangman.Web.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/playhangman")]
     [ApiController]
+    //[Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    //[Authorize(AuthenticationSchemes = "Google")]
+    //[Authorize(AuthenticationSchemes = "Facebook")]
     public class PlayHangmanController : ControllerBase
     {
+
         private readonly IMediator _mediator;
         private readonly ILogger _logger;
 
@@ -24,9 +33,9 @@ namespace EP.Hangman.Web.Controllers
             _mediator = mediator;
             _logger = logger;
         }
-
+        
         //GET: api/PlayHangman/{id}
-        [HttpGet("id")]
+        [HttpGet("{id}")]
         [SwaggerResponse(HttpStatusCode.OK, typeof(ControllerData), Description = "Red")]
         [SwaggerResponse(HttpStatusCode.NotFound, typeof(ControllerData), Description = "Session not found")]
         public async Task<IActionResult> GetUserSessionAsync(string id)
@@ -41,7 +50,7 @@ namespace EP.Hangman.Web.Controllers
         [HttpPost]
         [SwaggerResponse(HttpStatusCode.Created, typeof(ControllerData), Description = "Success")]
         [SwaggerResponse(HttpStatusCode.BadRequest, typeof(ControllerData), Description = "Object didn't create")]
-        public async Task<IActionResult> CreateNewGameAsync()
+        public async Task<IActionResult> CreateNewGameCookieAsync()
         {
             var result = await _mediator.Send(new CreateNewGameCommand());
             _logger.LogInformation("Received POST request");
@@ -59,7 +68,7 @@ namespace EP.Hangman.Web.Controllers
             _logger.LogInformation("Received PUT request");
             var result = await _mediator.Send(new CheckLetterCommand(model));
             _logger.LogInformation("PUT request executed");
-            return result.IsSuccess ? (IActionResult)Ok(result) : BadRequest(result.Error);
+            return result.IsSuccess ? (IActionResult)Ok(result.Value) : BadRequest(result.Error);
         }
 
         //DELETE: api/PlayHangman

@@ -1,7 +1,11 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Threading.Tasks;
+using EP.Balda.Logic.Commands;
 using EP.Balda.Logic.Models;
 using EP.Balda.Logic.Queries;
+using EP.Balda.Web.Models;
+using EP.Balda.Web.Services;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -10,7 +14,7 @@ using NSwag.Annotations;
 namespace EP.Balda.Web.Controllers
 {
     [ApiController]
-    public class MapController : ControllerBase
+    public class MapController : BaseController
     {
         private readonly IMediator _mediator;
         private readonly ILogger<MapController> _logger;
@@ -21,16 +25,45 @@ namespace EP.Balda.Web.Controllers
             _logger = logger;
         }
 
-        [HttpGet("api/map/{id}")]
+        [HttpGet("api/map")]
         [SwaggerResponse(HttpStatusCode.OK, typeof(Game), Description = "Success")]
-        [SwaggerResponse(HttpStatusCode.NotFound, typeof(void), Description =
-            "Map not found")]
-        public async Task<IActionResult> GetMapAsync([FromRoute]long id)
+        [SwaggerResponse(HttpStatusCode.NotFound, typeof(void), Description = "Map not found")]
+        public async Task<IActionResult> GetMapAsync([FromQuery] long id)
         {
-            _logger.LogDebug($"Action: {ControllerContext.ActionDescriptor.ActionName} Parameters: id = {id}");
+            _logger.LogDebug(
+                $"Action: {ControllerContext.ActionDescriptor.ActionName} Parameters: id = {id}");
 
-            var result = await _mediator.Send(new GetMap(id)).ConfigureAwait(false);
-            return result.HasValue ? (IActionResult)Ok(result.Value) : NotFound();
+            var result = await _mediator.Send(new GetMap() { Id = id });
+
+            if (result.HasValue)
+            {
+                _logger.LogInformation($"Action: {ControllerContext.ActionDescriptor.ActionName} " +
+                $"Parameter: Id = {id}");
+
+                var cells = Helpers.Do2DimArray(result.Value);
+                return Ok(cells);
+            }
+            else
+            {
+                _logger.LogWarning($"Action: {ControllerContext.ActionDescriptor.ActionName}: " +
+                    $"Id = {id} - Map not found");
+
+                return NotFound();
+            }
+        }
+
+        [HttpGet("api/map/alphabet")]
+        [SwaggerResponse(HttpStatusCode.OK, typeof(Game), Description = "Success")]
+        [SwaggerResponse(HttpStatusCode.NotFound, typeof(void), Description = "Error")]
+        public IActionResult GetAlphabet()
+        {
+            _logger.LogDebug(
+                $"Action: {ControllerContext.ActionDescriptor.ActionName}");
+
+            var alphabet = Helpers.GetEnglishAlphabet();
+
+            return alphabet != null ? (IActionResult)Ok(alphabet) : BadRequest();
+
         }
     }
 }

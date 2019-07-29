@@ -18,7 +18,7 @@ namespace EP.Hangman.Logic.Handlers
         private readonly GameDbContext _context;
         private readonly IMapper _mapper;
         private readonly ILogger<CreateDatabaseHandler> _logger;
-
+        
         public CreateNewGameHandler(GameDbContext context, IMapper mapper, ILogger<CreateDatabaseHandler> logger)
         {
             _context = context;
@@ -48,7 +48,7 @@ namespace EP.Hangman.Logic.Handlers
             try
             {
                 _logger.LogInformation("Updating database with new game session");
-                await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+                await _context.SaveChangesAsync(cancellationToken);
                 _logger.LogInformation("Database was updated");
 
                 return Result.Ok<ControllerData>(_mapper.Map<UserGameData, ControllerData>(_mapper.Map<GameDb, UserGameData>(result)));
