@@ -1,15 +1,44 @@
 ﻿using System;
 
-namespace EP.WordsMaker.Data
+namespace EP.WordsMaker.Data.Models
 {
+    /// <summary>
+    /// Represents <c>PlayerDb</c> class.
+    /// </summary>
     public class PlayerDb
     {
-        public int Id { get; set; }
+        /// <summary>
+        /// ID property
+        /// </summary>
+        /// <value>Represents unique id of player</value>
+        public string Id { get; set; }
 
+        /// <summary>
+        /// Name property
+        /// </summary>
+        /// <value>Represents nickname of player</value>
         public string Name { get; set; }
 
+        /// <summary>
+        /// Email property
+        /// </summary>
+        /// <value>Represents email adress of player</value>
+		public string Email { get; set; }
+
+        /// <summary>
+        /// Score property
+        /// </summary>
+        /// <value>Represents score of player</value>
         public int Score { get; set; }
 
-        public DateTime LastGame { get; set; }
+        public int BestScore { get; set; }
+
+		public int BestScoreId { get; set; }
+
+		/// <summary>
+		/// LastGame property
+		/// </summary>
+		/// <value>Represents last game player</value>
+		public DateTime LastGame { get; set; }
     }
 }

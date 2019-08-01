@@ -52,8 +52,8 @@ namespace EP.Hangman.Web.Controllers
         [SwaggerResponse(HttpStatusCode.BadRequest, typeof(ControllerData), Description = "Object didn't create")]
         public async Task<IActionResult> CreateNewGameCookieAsync()
         {
-            _logger.LogInformation("Received POST request");
             var result = await _mediator.Send(new CreateNewGameCommand());
+            _logger.LogInformation("Received POST request");
             _logger.LogInformation("POST request executed");
             return result.IsFailure ? BadRequest(result.Error) : (IActionResult) Created("Success", result.Value); 
         }
@@ -62,8 +62,8 @@ namespace EP.Hangman.Web.Controllers
         [HttpPut]
         [SwaggerResponse(HttpStatusCode.OK, typeof(ControllerData), Description = "Updated")]
         [SwaggerResponse(HttpStatusCode.BadRequest, typeof(ControllerData), Description = "Data didn't update")]
-        [ValidationFilter]
         public async Task<IActionResult> CheckLetterAsync([FromBody]ControllerData model) 
+        [ValidationFilter]
         {
             _logger.LogInformation("Received PUT request");
             var result = await _mediator.Send(new CheckLetterCommand(model));
@@ -71,15 +71,15 @@ namespace EP.Hangman.Web.Controllers
             return result.IsSuccess ? (IActionResult)Ok(result.Value) : BadRequest(result.Error);
         }
 
-        //DELETE: api/PlayHangman/{id}
-        [HttpDelete("{id}")]
-        [SwaggerResponse(HttpStatusCode.NoContent, typeof(ControllerData), Description = "Deleted")]
+        //DELETE: api/PlayHangman
+        [HttpDelete]
         [SwaggerResponse(HttpStatusCode.BadRequest, typeof(ControllerData), Description = "Data didn't delete")]
+        [SwaggerResponse(HttpStatusCode.NoContent, typeof(ControllerData), Description = "Deleted")]
         [ValidationFilter]
-        public async Task<IActionResult> DeleteGameSessionAsync(string id)
-        {
+        public async Task<IActionResult> DeleteGameSessionAsync([FromBody]ControllerData model)
             _logger.LogInformation("Received DELETE request");
-            var result = await _mediator.Send(new DeleteGameSessionCommand(id));
+        {
+            var result = await _mediator.Send(new DeleteGameSessionCommand(model));
             _logger.LogInformation("DELETE request executed");
             return result.IsSuccess ? (IActionResult) Ok(result.Value) : BadRequest(result.Error);
         }

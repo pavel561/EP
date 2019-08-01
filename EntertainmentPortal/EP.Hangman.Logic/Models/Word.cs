@@ -13,22 +13,22 @@ namespace EP.Hangman.Logic.Models
         /// Property stores random words 
         /// </summary>
         private string[] _allWords;
-
         /// <summary>
+
         /// Faker's settings
         /// </summary>
-        public Word()
         {
+        public Word()
             _allWords = new Lorem().Words(15);
         }
 
         /// <summary>
         /// Method select one word from List of words (Use random)
-        /// </summary>
         /// <returns>One word</returns>
+        /// </summary>
         public string GetNewWord()
         {
-            return _allWords[new Random().Next(0, _allWords.Length)].ToUpper();
         }
+            return _allWords[new Random().Next(0, _allWords.Length)].ToUpper();
     }
 }

@@ -5,10 +5,28 @@ using System.Threading.Tasks;
 
 namespace EP.WordsMaker.Logic.Models
 {
-    public class Word
+	///<summary>
+	///
+	///</summary>
+	///<remarks>
+	///
+	/// </remarks>
+	public class Word
     {
-        public string _word;
+        /// <summary>
+        /// ID property
+        /// </summary>
+        /// <value>Represents unique id of word</value>
+        public string Id { get; set; }
 
-        public char[] _letters; 
+        /// <summary>
+        /// ID property
+        /// </summary>
+		public string Value { get; set; }
+
+        /// <summary>
+        /// ID property
+        /// </summary>
+		public string GameId { get; set; }
     }
 }
